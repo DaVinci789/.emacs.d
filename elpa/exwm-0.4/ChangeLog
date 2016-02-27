@@ -1,0 +1,1341 @@
+2016-02-25  Chris Feng	<chris.w.feng@gmail.com>
+
+	Bump version to 0.4
+
+2016-02-25  Chris Feng	<chris.w.feng@gmail.com>
+
+	Allow user to hide floating X windows
+
+	* exwm-core.el (exwm-mode-map): Add a new key to hide floating X
+	windows.
+	* exwm-floating.el (exwm-floating-hide): New command to hide a floating
+	X window.
+
+	* exwm-workspace.el: Fix a compile warning.
+
+2016-02-24  Chris Feng	<chris.w.feng@gmail.com>
+
+	Refresh the workspace after creating a floating X window
+
+	* exwm-floating.el (exwm-floating--set-floating): Refresh the workspace
+	(since auto-refresh was disabled).
+
+2016-02-24  Chris Feng	<chris.w.feng@gmail.com>
+
+	Fix issues with moving X windows between workspaces
+
+	* exwm-workspace.el (exwm-workspace-move-window): Select the moved
+	floating X window.  Update the 'exwm-selected-window' frame parameter.
+	(exwm-workspace-switch): Check 'exwm-selected-window' for dead windows.
+	(exwm-workspace-switch-to-buffer): Allow non-interactive call.
+
+2016-02-23  Chris Feng	<chris.w.feng@gmail.com>
+
+	Make input focus revert to pointer root
+
+	* exwm-input.el (exwm-input--set-focus): Input focus should not revert
+	to parent (which was the Emacs frame) any more.
+
+2016-02-22  Chris Feng	<chris.w.feng@gmail.com>
+
+	Bump version to 0.3
+
+2016-02-21  Chris Feng	<chris.w.feng@gmail.com>
+
+	Fix emacsclient related issues
+
+	* exwm-systemtray.el (exwm-systemtray-height): The value is not
+	available when emacsclient has just loaded the library (and it crashes
+	emacsclient).
+
+	* exwm-workspace.el (exwm-workspace--init): Set
+	`default-minibuffer-frame' later to prevent it from being modified when
+	using emacsclient.
+
+	* exwm-floating.el:
+	* exwm-randr.el:
+	* exwm-systemtray.el:
+	* exwm-workspace.el:
+	* exwm.el: Use `exwm-workspace--minibuffer-own-frame-p' instead of the
+	raw variable.
+
+2016-02-21  Chris Feng	<chris.w.feng@gmail.com>
+
+	Various fixes for floating X windows
+
+	* exwm-floating.el (exwm-floating--set-floating): Always create floating
+	X windows on current workspace.
+
+	* exwm-workspace.el (exwm-workspace-switch): Restore selected floating 
+	frames.
+
+	* exwm-workspace.el (exwm-workspace-move-window): Restore the position
+	of floating X windows.	Recreate floating frames when using fixed
+	minibuffer. Restack tiling X windows.
+
+2016-02-21  Chris Feng	<chris.w.feng@gmail.com>
+
+	Fix the advice function for ido-buffer-window-other-frame
+
+	* exwm-config.el (exwm-config--ido-buffer-window-other-frame)
+	(exwm-config--fix/ido-buffer-window-other-frame): Do not use advice. Fix
+	issues when switching form/to floating frames.
+
+2016-02-20  Chris Feng	<chris.w.feng@gmail.com>
+
+	Prevent Emacs frames from restacking themselves
+
+	Putting Emacs frames (workspace frames, floating frames) into dedicated 
+	containers greatly simplifies the stacking order management and totally 
+	fixes relevant issues.
+
+	* exwm-floating.el (exwm-floating--set-floating): Create floating frame 
+	container.  Remove redundant stacking order modification code.
+	(exwm-floating--unset-floating): Destroy the floating frame container. 
+	No need to reparent the X window container.
+	(exwm-floating--do-moveresize): Resize the floating frame container.
+	* exwm-input.el (exwm-input--update-focus): No need to restack frames.
+	* exwm-layout.el (exwm-layout--show, exwm-layout--set-frame-fullscreen)
+	(exwm-layout-enlarge-window): Resize the floating frame container.
+	* exwm-manage.el (exwm-manage--on-ConfigureRequest): Re-enable stacking 
+	order modification on ConfigureRequest.
+
+	* exwm-workspace.el (exwm-workspace--confirm-kill-emacs): Reparent out
+	all frames on exit.  No need to remove selected events or created
+	resources.
+	(exwm-workspace--init): Create workspace frame containers.
+
+	* exwm-layout.el (exwm-layout-set-fullscreen):
+	* exwm-manage.el (exwm-manage--unmanage-window): Remove a redundant call
+	to
+	`xcb:flush'.
+
+	* exwm-manage.el (exwm-manage--unmanage-window): Force unmap the X
+	window. Unmap the floating frame before reparent it.
+
+2016-02-20  Chris Feng	<chris.w.feng@gmail.com>
+
+	Prevent/Reduce flickering issues with floating X windows
+
+	* exwm-floating.el (exwm-floating--set-floating)
+	(exwm-floating--unset-floating): Prevent flickering when
+	creating/removing a floating X window.
+	* exwm-layout.el (exwm-layout--show): Show X windows after resizing to 
+	prevent flickering.
+	* exwm-manage.el (exwm-manage--unmanage-window): Reduce flickering by 
+	hiding the container.
+	(exwm-manage--kill-buffer-query-function): Prevent flickering by hiding
+	the container (except that the X window destroys itself after receiving
+	the WM_DELETE_WINDOW client message).
+
+2016-02-20  Chris Feng	<chris.w.feng@gmail.com>
+
+	Redefine mode-specific keys
+
+	* exwm-core.el (exwm-mode-map): Redefine mode-specific keys to comply
+	with the key binding conventions.
+
+2016-02-19  Chris Feng	<chris.w.feng@gmail.com>
+
+	Minor fixes for system tray
+
+	* exwm-systemtray.el (exwm-systemtray--embed): Default to visible if the 
+	XEMBED_MAPPED flag is not set.
+	(exwm-systemtray--on-ClientMessage): Only embed new icons.  Ignore
+	balloon messages.
+
+2016-02-19  Chris Feng	<chris.w.feng@gmail.com>
+
+	Fix system tray issues after updating workspaces
+
+	* exwm-workspace.el (exwm-workspace-switch-hook): New hook run by
+	`exwm-workspace-switch'.
+	* exwm-randr.el (exwm-randr-refresh-hook): New hook run by
+	`exwm-randr--refresh'.
+	* exwm-systemtray.el (exwm-systemtray--on-randr-refresh)
+	(exwm-systemtray--on-workspace-switch, exwm-systemtray--init): Update
+	the system tray in `exwm-randr-refresh-hook' and
+	`exwm-workspace-switch-hook'.
+
+	* exwm-layout.el (exwm-layout--set-frame-fullscreen):
+	* exwm-workspace.el (exwm-workspace--post-init): Wait until all
+	workspace frames are set fullscreen.
+
+	* exwm-workspace.el (exwm-workspace--current-width)
+	(exwm-workspace--current-height): New functions for retrieving the width 
+	and height of the current workspace.
+	* exwm-layout.el (exwm-layout-set-fullscreen):
+	* exwm-manage.el (exwm-manage--manage-window)
+	(exwm-manage--on-ConfigureRequest):
+	* exwm-systemtray.el (exwm-systemtray--refresh, exwm-systemtray--init):
+	* exwm-workspace.le (exwm-workspace--resize-minibuffer-frame)
+	(exwm-workspace--on-ConfigureNotify): Switch to
+	`exwm-workspace--current-width' and `exwm-workspace--current-height'.
+
+	* exwm-core.el:
+	* exwm-floating.el:
+	* exwm-floating.el:
+	* exwm-input.el:
+	* exwm-layout.el:
+	* exwm-manage.el:
+	* exwm-randr.el:
+	* exwm-systemtray.el:
+	* exwm-workspace.el:
+	* exwm.el: Clean up loading file.  Set/Unset some functions as commands.
+
+	* README.md: Add intro to system tray.
+
+2016-02-19  Chris Feng	<chris.w.feng@gmail.com>
+
+	Add system tray support
+
+	* exwm-systemtray.el: New module adds a simple system tray (using the
+	X11 System Tray protocol).
+
+	* exwm-workspace.el (exwm-workspace-switch-hook, exwm-workspace-switch): 
+	New hook run after switching workspace.
+
+2016-02-18  Chris Feng	<chris.w.feng@gmail.com>
+
+	Fix floating X window bugs introduced by 9c95c03e
+
+	* exwm-floating.el (exwm-floating--set-floating): Make floating frames 
+	invisible before resizing them.
+	(exwm-floating--fit-frame-to-window): Removed since unused.
+	* exwm-layout.el (exwm-layout-hide-mode-line,
+	exwm-layout-show-mode-line): Use set frame height instead of
+	exwm-floating--fit-frame-to-window.
+
+	* exwm-core.el (exwm-mode): Replace `exwm-manage--close-window' with
+	`exwm-manage--kill-buffer-query-function'.
+	* exwm-floating.el (exwm-floating--unset-floating): Reparent out
+	floating frames.
+	* exwm-manage.el (exwm-manage--unmanage-window): Reparent out floating 
+	frames.	 Hide floating frames.
+	(exwm-manage--close-window, exwm-manage--kill-buffer-query-function): 
+	Rename `exwm-manage--close-window' since it's only used in
+	`kill-buffer-query-functions'.	Reparent out floating frames.
+
+2016-02-12  Chris Feng	<chris.w.feng@gmail.com>
+
+	Bump version to 0.2
+
+2016-02-12  Chris Feng	<chris.w.feng@gmail.com>
+
+	Postpone making workspace frames fullscreen
+
+	* exwm-workspace.el (exwm-workspace--init, exwm-workspace--post-init):
+	Move work to postpone to the new function `exwm-workspace--post-init'.
+
+	* exwm.el (exwm-init): Call `exwm-workspace--post-init' after
+	`exwm--unlock`.
+
+2016-02-09  Chris Feng	<chris.w.feng@gmail.com>
+
+	Fix bugs on managing/unmanaging X windows
+
+	* exwm-manage.el (exwm-manage--scan): Unmap X windows before managing
+	them.
+
+	(exwm-manage--on-UnmapNotify): Do not ignore synthetic UnmapNotify
+	events
+	(according to ICCCM).  Do not use the `from-configure' slot which was 
+	mistakenly introduced due to the bug in `exwm-manage--scan'.
+
+	* exwm-workspace.el (exwm-workspace--confirm-kill-emacs): Do more
+	cleanups.
+
+2016-02-07  Chris Feng	<chris.w.feng@gmail.com>
+
+	Eliminate compilation warnings
+
+2016-02-07  Chris Feng	<chris.w.feng@gmail.com>
+
+	Unmanage X windows on exit
+
+	* exwm-workspace.el (exwm-workspace--confirm-kill-emacs): New function 
+	called on exit to unmanage X windows.
+	(exwm-workspace--init): Set `confirm-kill-emacs' to
+	`exwm-workspace--confirm-kill-emacs'.
+
+	* exwm-manage.el (exwm-manage--on-UnmapNotify): Ignore UnmapNotify event 
+	generated as a result of parent being resized.
+
+2016-02-07  Chris Feng	<chris.w.feng@gmail.com>
+
+	Add some useful key bindings
+
+	* exwm-core.el (exwm--floating-mode-line-format, exwm--mode-line-format)
+	(exwm-mode-map):
+	* exwm-floating.el (exwm-floating-hide-mode-line)
+	(exwm-floating-show-mode-line):
+	* exwm-layout.el (exwm-layout-hide-mode-line,
+	exwm-layout-show-mode-line)
+	(exwm-layout-toggle-mode-line): Allow hide/show mode-line for all
+	`exwm-mode' buffers with 'C-c M'.
+
+	* exwm-config.el (exwm-config-default): Add simulation keys for 'C-d'
+	and
+	'C-k'.
+
+2016-02-07  Chris Feng	<chris.w.feng@gmail.com>
+
+	Remove an assertion
+
+	* exwm-randr.el (exwm-randr--refresh): There can be no valid output 
+	sometimes.
+
+2016-02-06  Felix Lange	 <fjl@twurst.com>
+
+	Resize minibuffer only when it's in its own frame
+
+	0e4055d3392 introduced a few calls to exwm-workspace--resize-minibuffer 
+	in various places. This function only works when the minibuffer is 
+	displayed in its own frame but was called unconditionally in some cases.
+
+	Fix it by wrapping all calls in an appropriate conditional and add an 
+	assertion. Also rename the function so it is clearer that it resizes a 
+	frame, which might prevent calling it unconditionally in the future.
+
+2016-02-06  Chris Feng	<chris.w.feng@gmail.com>
+
+	Improve bc80eefe
+
+	* exwm-layout.el (exwm-layout--set-frame-fullscreen):
+	* exwm-randr.el (exwm-randr--refresh):
+	* exwm-workspace.el (exwm-workspace--resize-minibuffer):
+	(exwm-workspace-switch):
+	* exwm.el (exwm--on-ClientMessage): Calling `exwm-workspace-switch' in
+	bc80eefe does not work correctly sometimes.  This commit improves it by
+	directly specify the geometry info rather than getting it from Emacs
+	frame.
+
+2016-02-06  Chris Feng	<chris.w.feng@gmail.com>
+
+	Fix multi-monitor/fullscreen issues
+
+	* exwm-randr.el (exwm-randr--refresh): Correct the _NET_WORKAREA
+	property. Reconfigure the current workspace when screen changes.
+	(exwm-randr--init): Run `exwm-randr-screen-change-hook' to take into 
+	account already attached monitor(s),
+
+	* exwm.el (exwm--on-ClientMessage): Reconfigure the current workspace
+	when it's fullscreen.
+
+2016-02-06  Chris Feng	<chris.w.feng@gmail.com>
+
+	Add auto-hiding minibuffer support
+
+	* exwm-floating.el (exwm-floating--set-floating): Take auto-hiding 
+	minibuffer into account when calculating available height.
+	(exwm-floating--unset-floating): Restack the container to avoid further 
+	restacking.
+	* exwm-input.el (exwm-input--update-focus): Use more accurate
+	restacking.
+	(exwm-input--on-minibuffer-setup): Replaced by
+	`exwm-layout--on-minibuffer-setup' and
+	`exwm-workspace--on-minibuffer-setup'.
+	(exwm-input-command-whitelist, exwm-input--during-command)
+	(exwm-input--on-KeyPress-line-mode): The functionality of
+	`exwm-input-command-whitelist' is replaced by
+	`exwm-input--during-command', which can automatically tell whether
+	functions like `read-event' are being called.
+	(exwm-input--init): Add/remove corresponding hooks.
+	* exwm-layout.el (exwm-layout--on-minibuffer-setup): Also set input
+	focus.
+	(exwm-layout--on-echo-area-change): New function for refreshing layout
+	when the size of echo area changes.
+	(exwm-layout--init): Track size changes for fixed minibuffer and echo
+	area.
+	* exwm-manage.el (exwm-manage--on-ConfigureRequest): Never grant
+	restacking requests initiated by other clients.
+	* exwm-workspace.el (exwm-workspace--minibuffer): New variable for the 
+	auto-hiding minibuffer.
+	(exwm-workspace-minibuffer-position): For setting the position of the 
+	auto-hiding minibuffer.
+	(exwm-workspace-display-echo-area-timeout): Seconds before echo area 
+	auto-hides.
+	(exwm-workspace--display-echo-area-timer): The corresponding timer.
+	(exwm-workspace-switch): Configure the auto-hiding minibuffer when 
+	switching workspace.
+	(exwm-workspace--update-minibuffer): New function for adjusting the
+	height of the auto-hiding minibuffer.
+	(exwm-workspace--on-ConfigureNotify): New function for configuring the 
+	container of the auto-hiding minibuffer.
+	(exwm-workspace--display-buffer): New function for forcing
+	`minibuffer-completion-help' to use the workspace frame.
+	(exwm-workspace--show-minibuffer, exwm-workspace--hide-minibuffer): New
+	functions for showing/hiding the auto-hiding minibuffer (container).
+	(exwm-workspace--on-minibuffer-setup,
+	exwm-workspace--on-minibuffer-exit): New functions called when the
+	auto-hiding minibuffer entered/exists.
+	(exwm-workspace--on-echo-area-dirty,
+	exwm-workspace--on-echo-area-clear): New functions when the auto-hiding
+	echo area is ready to show/hide.
+	(exwm-workspace--init): Set up the auto-hiding minibuffer and workspace 
+	frames.	 Track sizes changes for auto-hiding minibuffer and echo area. 
+	No need to set OverrideRedirect on workspace frames.
+	* exwm.el (exwm--init-icccm-ewmh): Correct the value of _NET_WORKAREA.
+
+2016-02-03  Chris Feng	<chris.w.feng@gmail.com>
+
+	Merge branch 'feat/virtual-root'
+
+2016-02-03  Chris Feng	<chris.w.feng@gmail.com>
+
+	Avoid unnecessary changes of stacking order
+
+	* exwm-input.el (exwm-input--update-focus): Only restack a tiling X
+	window when it's not the last but one sibling.	This should reduce
+	flickering.
+
+2016-02-03  Chris Feng	<chris.w.feng@gmail.com>
+
+	Rework the X windows hierarchy model
+
+	This commit add workspace and X window containers support to avoid using 
+	Emacs frames as the parents of X windows.  This should make it easier to 
+	set input focus.
+
+	* exwm-core.el (exwm--container, exwm--floating-frame-position): New
+	file local variables.
+	(exwm--floating-frame-geometry): Removed file local variable.
+	* exwm-floating.el (exwm-floating--set-floating)
+	(exwm-floating--unset-floating, exwm-floating--do-moveresize)
+	(exwm-floating-move): Use container.
+	(exwm-floating--fit-frame-to-window): No longer adjust stacking order.
+	(exwm-floating--fit-frame-to-window): The first member is changed to 
+	buffer.
+	(exwm-floating--start-moveresize): Use container.  Correctly set input 
+	focus.
+	* exwm-input.el (exwm-input--redirected, exwm-input--on-focus-in):
+	Removed.
+	(exwm-input--on-buffer-list-update): Remove the restriction on floating 
+	frames which is no longer valid.
+	(exwm-input--update-focus): Adjust stacking order.
+	(exwm-input--on-minibuffer-setup): New function for setting focus on the 
+	Emacs frame when entering minibuffer.
+	(exwm-input--on-KeyPress-line-mode): No longer compensate FocusOut
+	event.
+	(exwm-input--grab-keyboard, exwm-input--release-keyboard): Local keys
+	are now grabbed on the X window container.
+	(exwm-input--init): Add `exwm-input--on-minibuffer-setup' to
+	`minibuffer-setup-hook'.
+	* exwm-layout.el (exwm-layout--resize-container): New function to 
+	resize/reposition both the X window and its container.
+	(exwm-layout--show, exwm-layout--hide): Use container.
+	(exwm-layout-set-fullscreen): Use container.  No longer save width and 
+	height.
+	(exwm-layout-unset-fullscreen, exwm-layout--set-frame-fullscreen): Use 
+	container.
+	(exwm-layout--refresh): Update a frame parameter.  Remove dead code.
+	* exwm-manage.el (exwm-manage--manage-window): Reparent unmanaged X
+	windows to the workspace.  Create X window container as the parent of
+	the X window.
+	(exwm-manage--unmanage-window): Unmap/destroy container when
+	appropriate. Use the position of container.
+	(exwm-manage--unmanage-window): Destroy the container.
+	* exwm-randr.el (exwm-randr--refresh): Resize workspace using container.
+	* exwm-workspace.el (exwm-workspace-switch): Raise workspace. Correctly
+	set input focus.
+	(exwm-workspace--on-focus-in): Removed.
+	(exwm-workspace-move-window): Reparent to workspace container.
+	(exwm-workspace--init): Create workspace frames as visible. Create
+	workspace containers. Remove exwm-workspace--on-focus-in from
+	focus-in-hook. Update _NET_VIRTUAL_ROOTS.
+	* exwm.el (exwm-init): No longer disable hourglass window. Initialize
+	workspace module before input.
+
+	* exwm-core.el (exwm--debug): New macro for setting debug forms.
+
+	* exwm-floating.el (exwm-floating--set-floating): No longer do
+	`exwm--lock' and `exwm--unlock' since `make-frame' is already adviced to
+	take care of everything.  Correctly set input focus to the newly created
+	floating X window.
+
+	* exwm-core.el (exwm--floating-edges): Removed file local variable.
+	* exwm-floating.el (exwm-floating--set-floating)
+	(exwm-floating--unset-floating):
+	* exwm-layout.el (exwm-layout--show, exwm-layout-enlarge-window):
+	* exwm-manage.el (exwm-manage--on-ConfigureRequest): No longer use
+	floating geometry.
+
+	* exwm-input.el (exwm-input--update-global-prefix-keys): Grab global
+	keys on workspaces containers instead of the root window (or input focus
+	would transfer to the workspace containing the pointer when the grab is
+	active).
+	* exwm-workspace.el (exwm-workspace-switch): No longer move mouse.
+
+2016-02-02  Chris Feng	<chris.w.feng@gmail.com>
+
+	Update copyright year to 2016
+
+2015-12-13  Chris Feng	<chris.w.feng@gmail.com>
+
+	Remove the MappingNotify event listener
+
+	* exwm-input.el (exwm-input--on-MappingNotify, exwm-input--init): Remove 
+	the event listener for MappingNotify event (it should be handled in the 
+	underling library instead).
+
+2015-12-11  Chris Feng	<chris.w.feng@gmail.com>
+
+	Add support for desktop and dock
+
+	* exwm-manage.el (exwm-manage--manage-window): Add support for
+	_NET_WM_WINDOW_TYPE_DESKTOP and _NET_WM_WINDOW_TYPE_DOCK (they are not 
+	reparented).
+
+2015-11-15  W. Greenhouse  <wgreenhouse@riseup.net>
+
+	Limit X host-based auth permissions.
+
+	We don't need more than the currently logged in user to have access to
+	the X session, so don't grant X host access to other users.
+
+2015-11-10  Chris Feng	<chris.w.feng@gmail.com>
+
+	Fix a typo
+
+	* exwm-manage.el (exwm-manage--on-MapRequest): Correct a wrong variable 
+	name.
+
+2015-11-03  Chris Feng	<chris.w.feng@gmail.com>
+
+	Bump version to 0.1
+
+2015-11-02  Chris Feng	<chris.w.feng@gmail.com>
+
+	Disable some incompatible features
+
+	* exwm.el (exwm-init):
+	 exwm-config.el (exwm-config-misc):
+	 Disable dialog boxes and hourglass pointer by default.
+
+2015-11-01  Chris Feng	<chris.w.feng@gmail.com>
+
+	Add hook run when screen changes
+
+	* exwm-randr.el (exwm-randr-screen-change-hook): New hook.
+	 (exwm-randr--init): Run the new hook in the event handler of
+	 ScreenChangeNotify.
+
+2015-10-30  Chris Feng	<chris.w.feng@gmail.com>
+
+	Use new calling conventions of xcb:keysyms
+
+	* exwm-input.el: Use new calling conventions of xcb:keysyms
+
+2015-10-29  Chris Feng	<chris.w.feng@gmail.com>
+
+	Improve robustness of killing buffers
+
+	* exwm-core.el (exwm-mode): Use the return value of
+	 exwm-manage--close-window.
+	* exwm-manage.el (exwm-manage--close-window): Kill empty buffers; Handle
+	X
+	 windows that does not support _NET_WM_PING.
+	 (exwm-manage--kill-client): Kill X windows supporting _NET_WM_PID with
+	 both SIGKILL and KillClient.
+
+2015-10-29  Chris Feng	<chris.w.feng@gmail.com>
+
+	Avoid mapping managed X windows on MapRequest
+
+	* exwm-manage.el (exwm-manage--manage-window,
+	exwm-manage--on-MapRequest):
+	 Check managed X windows in exwm-manage--on-MapRequest instead.
+
+2015-10-28  Chris Feng	<chris.w.feng@gmail.com>
+
+	Check KEYSYMs converted from events
+
+	* exwm-input.el (exwm-input--update-global-prefix-keys)
+	 (exwm-input--fake-key, exwm-input--init): Check the return value of
+	 xcb:keysyms:event->keysym.
+
+2015-10-28  Chris Feng	<chris.w.feng@gmail.com>
+
+	Add demo configurations
+
+	* exwm-config.el: Demo EXWM configurations.
+	* xinitrc: Demo xinitrc file.
+	* exwm.el (exwm-enable-ido-workaround, exwm-disable-ido-workaround):
+	Partly
+	 moved to exwm-config.el.
+
+2015-10-28  Chris Feng	<chris.w.feng@gmail.com>
+
+	Make the creation/destruction of floating frames more silent
+
+	* exwm-floating.el (exwm-floating--set-floating): Reparent floating
+	frames
+	 as late as possible.
+	* exwm-manage.el (exwm-manage--unmanage-window): Hide floating frames
+	first
+	 on unmanagement.
+
+2015-10-28  Chris Feng	<chris.w.feng@gmail.com>
+
+	Minor input focus fix
+
+	* exwm-input.el (exwm-input--on-buffer-list-update): Schedule input
+	focus
+	 switch with idle timer.
+
+2015-10-27  Chris Feng	<chris.w.feng@gmail.com>
+
+	Delay closing minibuffer
+
+	* exwm-workspace.el (exwm-workspace-switch,
+	exwm-workspace--on-focus-in):
+	 Delay closing minibuffer until Emacs is idle. This prevent nonlocal
+	exits
+	 from interrupting remaining code.
+
+2015-10-26  Chris Feng	<chris.w.feng@gmail.com>
+
+	Fix problems introduced/exposed by last commit
+
+	* exwm-workspace.el (exwm-workspace-switch,
+	exwm-workspace--on-focus-in):
+	 Use handle-switch-frame instead of exwm-workspace--switch-count to
+	filter
+	 out events.
+
+	* exwm-workspace.el (exwm-workspace--init): Delay making workspaces
+	 fullscreen.
+
+	* exwm-workspace.el (exwm-workspace-move-window):
+	* exwm-floating.el (exwm-floating--set-floating):
+	* exwm-layout.el (exwm-layout--refresh):
+	 `set-buffer-major-mode` does not accept buffer names.
+
+2015-10-25  Chris Feng	<chris.w.feng@gmail.com>
+
+	Fix workspace switch issues
+
+	* exwm-core.el (exwm--make-emacs-idle-for): Removed.
+	* exwm-workspace.el (exwm-workspace--switch-count): New variable.
+	 (exwm-workspace-switch): Increase exwm-workspace--switch-count when
+	 necessary; Remove the call to exwm--make-emacs-idle-for.
+	 (exwm-workspace--on-focus-in): Consume exwm-workspace--switch-count.
+
+	* exwm-workspace.el (exwm-workspace--on-focus-in): Close active
+	minibuffer.
+
+2015-10-19  Chris Feng	<chris.w.feng@gmail.com>
+
+	Close the (possible) active minibuffer when switching workspace
+
+	* exwm-workspace.el (exwm-workspace-switch): An active minibuffer on
+	another
+	 workspace might cause problems for input.  Closing it should be
+	 sufficient.
+
+2015-10-17  Chris Feng	<chris.w.feng@gmail.com>
+
+	Allow certain commands to receive key events in line-mode
+
+	* exwm-input.el (exwm-input-command-whitelist): New variable.
+	 (exwm-input--on-KeyPress-line-mode): Allow certain commands which
+	receive
+	 inputs without using the minibuffer to work in line-mode.
+
+2015-10-11  Chris Feng	<chris.w.feng@gmail.com>
+
+	Improve robustness
+
+	* exwm-input.el (exwm-input--update-focus, exwm-input--on-ButtonPress):
+	 Make sure Emacs windows are alive before manipulating them.
+
+2015-10-10  Chris Feng	<chris.w.feng@gmail.com>
+
+	Restrict the check of _MOTIF_WM_HINTS
+
+	* exwm-manage.el (exwm-manage--manage-window): Restrict the check of
+	 _MOTIF_WM_HINTS to only Java applications (since some other
+	applications
+	 like Evince would also set it).
+
+2015-10-01  Chris Feng	<chris.w.feng@gmail.com>
+
+	Fix a position calculation error on multi-monitor settings
+
+	* exwm-floating.el (exwm-floating--set-floating): Always use relative
+	 positions.
+
+2015-09-27  Chris Feng	<chris.w.feng@gmail.com>
+
+	Work around subrs that block EXWM; other minor fixes
+
+	Some subrs (e.g. x-file-dialog) create X windows and block the execution
+	of EXWM, so they won't work normally.  This commit partly fixes this
+	issue by invoking them in a subordinate Emacs instance and trying to
+	fetch the result back.
+
+	* exwm.el (exwm-blocking-subrs): New variable for specify such subrs.
+	* exwm.el (exwm-enable, exwm--server-name, exwm--server-stop)
+	 (exwm--server-eval-at): The implementation.
+
+	* exwm-core.el:
+	* exwm-floating.el:
+	* exwm-layout.el:
+	* exwm-manage.el:
+	* exwm-randr.el:
+	 Evaluate constants at compile-time.
+
+	* README.md: Renamed from README.org to make the 'Commentary:' section
+	 used by GNU ELPA instead.
+
+	* exwm.el: Depends on XELB version 0.3.
+
+2015-09-25  Chris Feng	<chris.w.feng@gmail.com>
+
+	Fix click-to-focus on multi-monitor settings
+
+	* exwm-input.el (exwm-input--on-ButtonPress): [click-to-focus] Switch to
+	 the corresponding workspace if necessary.
+
+2015-09-24  Chris Feng	<chris.w.feng@gmail.com>
+
+	Fix a calculation error of the position of a floating frame
+
+	* exwm-floating.el (exwm-floating--set-floating): The position of a
+	 floating frame should be relative to its workspace.
+
+2015-09-23  Chris Feng	<chris.w.feng@gmail.com>
+
+	Adjust default prefix keys; advice x-create-frame
+
+	* exwm-input.el (exwm-input--on-KeyPress-line-mode,
+	exwm-input-prefix-keys):
+	 Allow users to disable 'C-c' prefixed keys; Add 'C-c' to / remove 'M-!'
+	 from the default prefix keys.
+
+	* exwm-workspace.el (exwm-workspace--x-create-frame,
+	exwm-workspace--init):
+	 Advice `x-create-frame' to prevent it from hanging EXWM, making e.g.
+	 speedbar working.
+	* exwm-floating.el (exwm-floating--set-floating): Remove the now
+	unnecessary
+	 request that sets override-redirect on floating frames.
+
+2015-09-21  Chris Feng	<chris.w.feng@gmail.com>
+
+	Minor fixes for packaging
+
+	* .gitignore: Add ELPA files.
+	* exwm-workspace.el: Autoload exwm-workspace-switch.
+	* README.org: Renamed from README.md; add an installation note.
+
+2015-09-20  Chris Feng	<chris.w.feng@gmail.com>
+
+	Fix input & input focus issues
+
+	* exwm-manage.el (exwm-manage--manage-window): Only grab
+	left/middle/right
+	 buttons.
+
+	* exwm-input.el (exwm-input--on-ButtonPress): Only perform
+	click-to-focus on
+	 unfocused X windows.
+
+	* exwm-input.el (exwm-input--update-focus): Do not focus an X window on
+	 another workspace, but instead keep focusing on the current one and set
+	 exwm--urgency parameter on that frame.
+
+	* exwm-input.el (exwm-input--fake-key): Send KeyRelease event (some
+	 applications reply on it).
+
+2015-09-19  Chris Feng	<chris.w.feng@gmail.com>
+
+	Manage non-floating windows without decorations
+
+	* exwm-manage.el (exwm-manage--manage-window): Should manage
+	non-floating
+	 windows without decorations.
+
+2015-09-19  Chris Feng	<chris.w.feng@gmail.com>
+
+	Check _MOTIF_WM_HINTS when attempting to manage an X window
+
+	* exwm-core.el: New buffer-local variable exwm--mwm-hints.
+	* exwm-manage.el: New variable exwm--atom-_MOTIF_WM_HINTS for holding
+	the
+	 value of _MOTIF_WM_HINTS atom; new function exwm--update-mwm-hints for
+	 updating the _MOTIF_WM_HINTS property of an X window.
+	* exwm-manage.el (exwm-manage--init): Intern the _MOTIF_WM_HINTS atom.
+	* exwm-manage.el (exwm-manage--manage-window): Avoid managing windows
+	 without decoration (implied by _MOTIF_WM_HINTS).
+
+2015-09-19  Chris Feng	<chris.w.feng@gmail.com>
+
+	Avoid autoloading variables
+
+	* exwm-floating.el:
+	* exwm-layout.el:
+	 Avoid autoloading exwm-floating-border-width.
+	* exwm-workspace.el:
+	 Avoid autoloading exwm-workspace--switch-history-outdated.
+
+2015-09-18  Chris Feng	<chris.w.feng@gmail.com>
+
+	Prevent Emacs cursor style change when pointer is in an X window
+
+	* exwm-input.el (exwm-input--on-KeyPress-char-mode): Compensate FocusOut
+	 event by sending a synthetic FocusIn event to prevent the change of
+	cursor
+	 style (e.g. box to hollow) when pointer is in an X window.
+
+2015-09-18  Chris Feng	<chris.w.feng@gmail.com>
+
+	Fix a compilation warning
+
+	* exwm-floating.el: Autoload exwm-floating-border-width.
+
+2015-09-18  Chris Feng	<chris.w.feng@gmail.com>
+
+	Fix wrong/missing ConfigureNotify events
+
+	* exwm-floating.el (exwm-floating--set-floating): Set
+	exwm--floating-edges
+	 as absolute edges (the relative edges can be easily determined).
+	* exwm-layout.el (exwm-layout--show): Send correct absolute positions to
+	 floating X windows.
+
+	* exwm-floating.el (exwm-floating--stop-moveresize, exwm-floating-move):
+	Send
+	 ConfigureNotify events after moving floating X windows.
+
+2015-09-17  Chris Feng	<chris.w.feng@gmail.com>
+
+	On-demand update exwm-workspace--switch-history
+
+	* exwm-workspace.el (exwm-workspace--switch-history-outdated)
+	 (exwm-workspace--update-switch-history, exwm-workspace-switch)
+	 (exwm-workspace-move-window):
+	* exwm.el (exwm--update-hints, exwm--on-ClientMessage):
+	* exwm-floating.el (exwm-floating--set-floating):
+	* exwm-manage.el (exwm-manage--manage-window,
+	exwm-manage--unmanage-window):
+	 Update exwm-workspace--switch-history only when it's used.
+
+2015-09-16  Chris Feng	<chris.w.feng@gmail.com>
+
+	Allow showing buffers on other workspaces and moving an X window by
+	switching to its buffer
+
+	* exwm-workspace.el (exwm-workspace-show-all-buffers,
+	exwm-workspace-switch)
+	 (exwm-workspace-move-window, exwm-workspace-switch-to-buffer): Show
+	buffers
+	 on other workspaces if `exwm-workspace-show-all-buffers' is non-nil.
+
+	* exwm-layout.el (exwm-layout-show-all-buffers, exwm-layout--refresh):
+	Allow
+	 moving an X window by switch to its corresponding buffer from another
+	 workspace when `exwm-layout-show-all-buffers' is non-nil.
+	* exwm.el (exwm--ido-buffer-window-other-frame): Handle the case when
+	 `exwm-layout-show-all-buffers' is non-nil.
+
+	* exwm-floating.el (exwm-floating--set-floating): Handle the case when
+	 *scratch* buffer is killed.
+
+	* exwm-workspace.el (exwm-workspace-switch-to-buffer): Renamed from
+	 `exwm-workspace-switch-to-window' to better reflect its role.
+
+2015-09-11  Chris Feng	<chris.w.feng@gmail.com>
+
+	Fix with-slots
+
+	* exwm-randr.el (exwm-randr--refresh): Could not set the name slot in
+	 xcb:randr:GetOutputInfo~reply, turn to another variable.
+
+2015-09-11  Chris Feng	<chris.w.feng@gmail.com>
+
+	Minor fix for window move
+
+	* exwm-workspace.el (exwm-workspace-move-window): Move to selected
+	instead of
+	 the first window of a frame (workspace).
+
+2015-09-11  Chris Feng	<chris.w.feng@gmail.com>
+
+	Implement move/resize with keyboard
+
+	* exwm-floating.el: Remove an invalid TODO item.
+	* exwm-floating.el (exwm-floating--set-floating)
+	 (exwm-floating-hide-mode-line, exwm-floating-show-mode-line): Set
+	 window-size-fixed only for fixed-size floating windows.
+	* exwm-floating.el (exwm-floating-move): New function for moving a
+	floating
+	 window.
+	* exwm-layout.el (exwm-layout-enlarge-window)
+	 (exwm-layout-enlarge-window-horizontally, exwm-layout-shrink-window)
+	 (exwm-layout-shrink-window-horizontally): New commands for
+	interactively
+	 resizing a floating window.
+
+2015-09-11  Chris Feng	<chris.w.feng@gmail.com>
+
+	Allow switch to normal buffers in exwm-workspace-switch-to-window
+
+	* exwm-workspace.el (exwm-workspace-switch-to-window): Allow switch to
+	normal
+	 buffers.
+
+2015-09-09  Chris Feng	<chris.w.feng@gmail.com>
+
+	Add a command to interactively move X window to the current workspace
+
+	* exwm-workspace.el (exwm-workspace-move-window): Hide buffer on the
+	original
+	 Emacs window when moving an X window to the current workspace.
+	* exwm-workspace.el: New function exwm-workspace-switch-to-window for
+	 interactively moving an X window on another workspace to the current
+	one.
+
+2015-09-09  Chris Feng	<chris.w.feng@gmail.com>
+
+	Add support for xcb:Atom:_NET_CLIENT_LIST_STACKING etc
+
+	The _NET_CLIENT_LIST_STACKING EWMH property is essential for e.g. the
+	tabbar of chromium to work correctly.
+
+	* exwm-input.el: Remove invalid TODO item.
+	* exwm.el (exwm--init-icccm-ewmh): Add xcb:Atom:_NET_CLIENT_LIST and
+	 xcb:Atom:_NET_CLIENT_LIST_STACKING to _NET_SUPPORTED.
+	* exwm-layout.el (exwm-layout--refresh): Update
+	_NET_CLIENT_LIST_STACKING.
+	* exwm-manage.el (exwm-manage--manage-window,
+	exwm-manage--unmanage-window):
+	 Update _NET_CLIENT_LIST.
+
+2015-09-07  Chris Feng	<chris.w.feng@gmail.com>
+
+	Allow hide/show mode-line on floating frames
+
+	* exwm-core.el: new buffer-local variable
+	exwm--floating-mode-line-format for
+	 saving mode-line-format when mode-line is hidden
+	* exwm-floating.el (exwm-floating--fit-frame-to-window)
+	 (exwm-floating-hide-mode-line, exwm-floating-show-mode-line): new
+	functions
+	 for resizing frames, hiding/showing mode-line respectively;
+	 (exwm-floating--set-floating): use exwm-floating--fit-frame-to-window
+	to
+	 resize frames
+
+2015-09-06  Chris Feng	<chris.w.feng@gmail.com>
+
+	Code cleanups
+
+	* exwm-workspace.el (exwm-workspace--update-switch-history): use `aref'
+	instead
+	 of `elt' to index vectors
+	* .elpaignore: ignore README.md
+
+2015-09-04  Chris Feng	<chris.w.feng@gmail.com>
+
+	Prepare for GNU ELPA release
+
+	* Transfer copyright to Free Software Foundation
+	* Add packaging components (e.g. headers)
+	* Coding style fixes:
+	 + Quote functions with "#'"
+	 + Wrap long lines
+	 + Fix doc strings / comments
+	* Replace `string-to-int' with `string-to-number'
+	* Fix compiling errors / eliminate compiling warnings
+	 + Add exwm-core.el to hold common variables, functions and macros
+	* Remove the redundant COPYING file
+	* Add .gitignore
+	* Rename README to README.md
+
+2015-09-03  Chris Feng	<chris.w.feng@gmail.com>
+
+	Ungrab pointer timely when resizing is aborted
+
+	* exwm-floating.el (exwm-floating--start-moveresize): when resizing type
+	cannot
+	 be decided, ungrab the previously grabbed pointer.
+
+2015-08-28  Philip  <pipcet@gmail.com>
+
+	Minor fix
+
+2015-08-28  Chris Feng	<chris.w.feng@gmail.com>
+
+	Drop intro to xelb-util
+
+2015-08-27  Chris Feng	<chris.w.feng@gmail.com>
+
+	Avoid deleting the frame created by Emacs client by accident
+
+	When Emacs is invoked as `emacsclient -a '' -c`, it creates a frame that
+	can be deleted without any prompt. This commit removes the `client`
+	parameter from that frame to avoid such inconvenience.
+
+2015-08-27  Chris Feng	<chris.w.feng@gmail.com>
+
+	Re-enable complete refresh of keyboard mapping
+
+	Since the performance of `xcb:keysyms:update-keyboard-mapping` is no
+	longer an problem, we allow every possible refresh of keyboard mapping
+	again.
+
+2015-08-27  Chris Feng	<chris.w.feng@gmail.com>
+
+	Fix window size calculations
+
+	* When sending the synthetic ConfigureNotify event, make sure we are
+	dealing
+	 with the correct Emacs window
+	* When managing a floating window, ensure it can be easily pick up by
+	the user
+
+2015-08-26  Chris Feng	<chris.w.feng@gmail.com>
+
+	Fix `exwm-workspace-rename-buffer`
+
+	Ensure buffer names are unique.
+
+2015-08-26  Chris Feng	<chris.w.feng@gmail.com>
+
+	Correct several EWMH properties
+
+	The following EWMH properties on the root window are corrected in this
+	commit:
+	_NET_VIRTUAL_ROOTS, _NET_WORKAREA and _NET_DESKTOP_VIEWPORT.
+
+2015-08-26  Chris Feng	<chris.w.feng@gmail.com>
+
+	Replay KeyPress events instead of fake them in line-mode
+
+	X windows in line-mode receive KeyPress events faked with SendEvent
+	requests previously. This causes many problems including:
+
+	* Some applications (e.g. xterm) ignore synthetic events completely
+	* KeyPress and KeyRelease evnets arrive disorderly
+
+	This commit makes EXWM exploiting AllowEvents requests (in
+	ReplayKeyboard mode) to forward KeyPress events to X windows instead.
+
+2015-08-25  Chris Feng	<chris.w.feng@gmail.com>
+
+	Merge pull request #42 from pipcet/ewmh-fullscreen
+
+	Avoid using the "no window manager" code in Emacs
+
+2015-08-24  Philip  <pipcet@gmail.com>
+
+	Avoid using the "no window manager" code in Emacs
+
+		* exwm.el (exwm--on-ClientMessage): Handle fullscreen requests
+	for frames.
+	(exwm-init): Initialize workspaces after unlocking events.
+
+		* exwm-workspace.el (exwm-workspace--init): Create frames as
+	invisible, then make them visible only once their OverrideRedirect
+	property has been set.
+
+		* exwm-randr.el (exwm-randr--refresh): New frame parameter
+	`exwm-geometry'.
+
+		* exwm-layout.el (exwm-layout--set-frame-fullscreen): New
+	       function.
+
+	The Emacs code is buggy, see https://github.com/ch11ng/exwm/issues/39
+
+	https://github.com/ch11ng/exwm/pull/42
+
+2015-08-24  Chris Feng	<chris.w.feng@gmail.com>
+
+	Only manage windows mapped as the direct children of root window (close
+	#38)
+
+	Sometimes Emacs create child windows of virtual roots. This commit
+	ensures EXWM will not manage them.
+
+2015-08-17  Chris Feng	<chris.w.feng@gmail.com>
+
+	Merge branch 'move-window-fix' of https://github.com/pipcet/exwm into
+	pipcet-move-window-fix
+
+2015-08-17  Philip  <pipcet@gmail.com>
+
+	Improve code robustness.
+
+		* exwm-layout.el (exwm-layout-unset-fullscreen)
+	(exwm-layout-set-fullscreen): Use `user-error' rather than
+	`cl-assert'.
+	* exwm-input.el (exwm-input--set-focus): Silently accept unknown
+	ids. (exwm-input--grab-keyboard) (exwm-input--release-keyboard):
+	       Silently ignore calls for windows that have no buffer.
+	* exwm-manage.el (exwm-manage--kill-client): Don't throw error
+	when trying to kill a vanished window.
+
+2015-08-17  Philip  <pipcet@gmail.com>
+
+	fix buffer renaming
+
+	per https://github.com/ch11ng/exwm/pull/30
+
+2015-08-16  Philip  <pipcet@gmail.com>
+
+	Fix bug when moving a window to the current workspace
+
+		* exwm-workspace.el (exwm-workspace-move-window): Run
+		 reparenting code when moving a window to the current workspace.
+
+2015-08-16  Chris Feng	<chris.w.feng@gmail.com>
+
+	Provide hooks run when the floating state of a window changes (close
+	#28)
+
+2015-08-14  Chris Feng	<chris.w.feng@gmail.com>
+
+	Honor `value-mask` field in ConfigureRequest event
+
+	Some applications (e.g. JNLP) don't set correct values for fields not
+	mentioned in `value-mask`. This commit corrects this bug together with
+	another Java AWT specific problem.
+
+2015-08-13  Chris Feng	<chris.w.feng@gmail.com>
+
+	Fix input focus stealing
+
+	This was fixed in b755296 but broken by 04e4269.
+
+2015-08-13  Chris Feng	<chris.w.feng@gmail.com>
+
+	Fix multi-screen bugs
+
+	* RandR module is now made optional; users can enable it with
+	 `exwm-randr-enable`.
+	* Correct the calculation of sizes/coordinates at various places.
+	* Input focus is now tracked with (Emacs) window instead of buffer since
+	the
+	 latter can be ambiguous in multi-screen settings.
+
+2015-08-13  Chris Feng	<chris.w.feng@gmail.com>
+
+	Minor fixes for emacsclient
+
+2015-08-12  Chris Feng	<chris.w.feng@gmail.com>
+
+	Improve input focus switch mechanism
+
+	This commit should fix most input focus bugs (especially those related
+	to floating windows). The actual settings of input focus are delayed to
+	exclude redundant event. Dead code since this commit is removed.
+
+	This commit also fixes a bug for non-floating windows converted form
+	floating state. The workaround for `ido-mode` is also improved to
+	properly handle
+	`exwm-mode` buffers.
+
+2015-08-11  Chris Feng	<chris.w.feng@gmail.com>
+
+	Center floating windows by default
+
+	This commit makes a floating window centered to its leading window if it
+	has a valid WM_TRANSIENT_FOR property set. Other it's placed at the
+	center of the screen.
+
+2015-08-11  Chris Feng	<chris.w.feng@gmail.com>
+
+	Fix buffer switch problems
+
+	* Prevent switching to floating windows or windows on other workspaces
+	* Provide a workaround for `ido-mode` (can be enabled with
+	 `(exwm-enable-ido-workaround)`)
+
+2015-08-11  Chris Feng	<chris.w.feng@gmail.com>
+
+	Remove redundant code caused by the concurrency of events (contd, 2)
+
+	* Remove locks that are no longer required
+	* Also fix #20 (inactive workspace frame steals input focus)
+
+2015-08-10  Chris Feng	<chris.w.feng@gmail.com>
+
+	Ignore repeated `MappingNotify` events
+
+	For some reason, `MappingNotify` events are generated quite frequently
+	and greatly impact the performance. This commit disables the complete
+	refresh of keyboard mapping.
+
+2015-08-10  Chris Feng	<chris.w.feng@gmail.com>
+
+	Remove redundant code caused by the concurrency of events (continued)
+
+	Remove `exwm--with-current-id`, which was introduced to as a wrapper to
+	`with-current-buffer` to do extra checks. Note that in functions run as
+	hooks, the validation of window ID is still required as they are not
+	synchronized with events.
+
+2015-08-10  Chris Feng	<chris.w.feng@gmail.com>
+
+	Fix emacsclient bugs
+
+	`emacsclient` started with `-c` or `-t` argument create a new frame that
+	shall not be used to manage X windows. Also fix some related input focus
+	issues (with some remaining unfixed). Close #17.
+
+2015-08-09  Chris Feng	<chris.w.feng@gmail.com>
+
+	Remove redundant code caused by the concurrency of events
+
+	With the introduction of ch11ng/xelb@6a7bccc, many weird behaviors
+	should disappear. These include by not limit to
+	* race conditions when managing a window (a workaround is provided in
+	@14628a9)
+	* race conditions when unmanaging a window This commit removes some
+	corresponding code.
+
+2015-08-09  Chris Feng	<chris.w.feng@gmail.com>
+
+	Refresh when minibuffer grows (fix #10)
+
+	The expansion of echo area is not handled however.
+
+2015-08-08  Chris Feng	<chris.w.feng@gmail.com>
+
+	Show moved window by default
+
+2015-08-08  Chris Feng	<chris.w.feng@gmail.com>
+
+	Correct layout refresh problems
+
+	* Relax the conditions to refresh layout; this may introduce some
+	overheads
+	 though
+	* Fix the problem when `*scratch*` buffer is killed; close #12
+	* Enhance `exwm-reset` by forcing layout refresh in it. This should
+	allow users
+	 to overcome some layout bugs
+
+2015-08-08  Chris Feng	<chris.w.feng@gmail.com>
+
+	Fix some input focus issues
+
+	* Fix input focus lost after moving window to another workspace
+	* Enhance `exwm-reset` to provide user a way to reset input focus when
+	it's
+	 lost unexpectedly
+
+2015-08-08  Chris Feng	<chris.w.feng@gmail.com>
+
+	Fixes for manage/unmanage window
+
+	* Make sure `exwm-manage--manage-window-queue` is cleaned
+	* Improve input focus handling after unmanaging a window
+	* Remove a redundant call to `exwm-layout--show`
+
+2015-08-07  Chris Feng	<chris.w.feng@gmail.com>
+
+	Fix race conditions when managing a window
+
+	Since it takes some time for EXWM to create a buffer for a window (to do
+	some checking for example), the window may send several MapRequest
+	events before it's mapped. This commit should fix such issue.
+
+2015-08-07  Chris Feng	<chris.w.feng@gmail.com>
+
+	Fix input focus lost after closing window
+
+	Also insert some debug messages.
+
+2015-08-07  Chris Feng	<chris.w.feng@gmail.com>
+
+	Various input fixes
+
+	* Fix `exwm-reset`
+	* Make input mode buffer local
+	* Allow window to stay in `char-mode` while setting input focus to other
+	window
+	 or switching to other workspace
+
+2015-08-06  Chris Feng	<chris.w.feng@gmail.com>
+
+	Check buffer mode in exwm-reset
+
+	This should prevent users from misoperation.
+
+2015-08-06  Chris Feng	<chris.w.feng@gmail.com>
+
+	Fix fullscreen issues
+
+	* Correct ConfigureNotify events sent to fullscreen windows.
+	* Exit fullscreen mode before switching workspace.
+	* Temporarily treat `xcb:Atom:_NET_WM_STATE_ABOVE` as
+	 `xcb:Atom:_NET_WM_STATE_FULLSCREEN` since
+	 a) "plugin-container" (Flash Player) seems only set this, and
+	 b) it's not normally used by applications.
+	 This makes fullscreen videos working in e.g. iceweasel.
+
+2015-08-05  Chris Feng	<chris.w.feng@gmail.com>
+
+	Drop intro to EXIM
+
+2015-08-05  Chris Feng	<chris.w.feng@gmail.com>
+
+	Various fixes
+
+	* Prevent marking the end of a key sequence with a single `C-u'.
+	* Enable `C-u' prefix for key simulation since it's not possible for
+	users to
+	 define simulation keys starting with `C-u'.
+	* Make Emacs idle only after the visual parts are updated to prevent
+	from
+	 disturbing users.
+	* Should use '?\s' instead of '? '.
+
+2015-08-05  Markus S.  <kamikazow@web.de>
+
+	Fix typos
+
+2015-08-03  Chris Feng	<chris.w.feng@gmail.com>
+
+	Add basic RandR support
+
+	This implementation is analogous to that in i3-wm, which requires
+	external tools to properly configure RandR first.
+
+2015-07-26  Chris Feng	<chris.w.feng@gmail.com>
+
+	Fix potential naming conflicts
+
+	Buffers may share a same name (without the possible leading space) when
+	created in different workspaces.
+
+2015-07-19  Chris Feng	<chris.w.feng@gmail.com>
+
+	Various fixes
+
+	Remove wrong shift modifiers. Hide a Window when it's moved to another
+	workspace.
+
+2015-07-18  Chris Feng	<chris.w.feng@gmail.com>
+
+	Various fixes for workspace
+
+	Fixes for full screen, move window, etc.
+
+2015-07-18  Chris Feng	<chris.w.feng@gmail.com>
+
+	Add wiki link to README
+
+2015-07-18  Chris Feng	<chris.w.feng@gmail.com>
+
+	Improve move/resize
+
+	The type of move/resize is consistent during one complete operation. So
+	there is no need to judge it on every mouse motion.
+
+2015-07-17  Chris Feng	<chris.w.feng@gmail.com>
+
+	First commit
+

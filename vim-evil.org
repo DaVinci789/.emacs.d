@@ -1,0 +1,248 @@
+#+TITLE: Learning Vim from Emacs + Evil
+#+AUTHOR: Jaden Manacsa
+
+* Why Emacs?
+- Many of you are probably asking why Emacs and not Vi(m).
+- It's just that Emacs is a RREEAAALLYY good editor.
+- Also, Emacs has some advantages.
+  - Org-mode (Organize your life in plain text!)
+  - Async
+  - Magit (A git porcelain)
+  - Vi emulation mode (EVIL-mode)
+
+* Starting EMACS
+- Install Emacs for your Operating System.
+  - Windows
+  - MacOSX
+  - Unix based systems (Linux, BSDs)
+    - Get it from your package manager
+  - Compile it from source
+
+- Optional: Remap Left Control to Caps Lock
+  
+* Emacs Survival Keys
+- Control Keys
+  - C-n: Move down
+  - C-p: Move up
+  - C-f: Move forward one character
+  - C-b: Move back one character
+  - C-g: Cancel stuff (Emacs' get me outta here key)
+  - C-x k: Press Ctrl then k to 'kill' or delete the current text you are editing
+  - C-x o: Rotate between windows
+  - C-x 2: Create a horizontal split (window)
+  - C-x 3: Create a vertical split
+- 'Meta' or Alt keys
+  - M-x: Calls the 'minibuffer' where you can call Emacs functions
+    
+* What are MODES
+- Emacs calls plugins MODES
+  - A MAJOR mode can change the current editing environment such as font locking
+    (syntax highlighting)
+    - Python Mode
+    - Org Mode
+  - A MINOR mode is just a small change that does not change the overall behavior
+    of editing
+    - Nyan Mode
+    - Auto-Complete mode
+      
+* Installing EVIL mode
+  - Emacs has a very impressive vim emulation mode called EVIL
+    - Evil stands for Extendable VI Layer
+  - Evil can be installed through the Emacs Package manager (package.el)
+    
+* Installing EVIL mode (cont.)
+  - Load up EMACS
+  - Hold ALT (META) then X
+  - Release Keys
+  - Type find-file
+  - In the minibuffer that says "Find File:"
+    - TYPE ~/.emacs.d/init.el:
+  - TYPE:
+
+* Installing EVIL mode (cont.)
+  - Save and quit with C (Control) x, then C-c
+  - Restart EMACS
+  - Hold ALT (META) then X
+  - Type in "package-install" without quotes
+  - Type "evil"
+* Installing EVIL mode (cont.)
+  - Hold ALT (META) then X
+  - Release Keys
+  - Type find-file
+  - In the minibuffer that says "Find File:"
+    - TYPE ~/.emacs.d/init.el:
+  - In your init.el file insert:
+    - (require 'evil)
+      (evil-mode)
+  - Done
+ 
+* After installing EVIL mode
+  - RET -> Return or Enter
+  - "package-install" these packages:
+    - which-key (M-x RET which-key)
+    - evil-tutor (M-x RET evil-tutor)
+  - Add to your init:
+    - (require 'which-key)
+      (which-key-mode)
+  - You can call the tutor with:
+    - M-x RET evil-tutor-start RET
+* Learning Vi
+* Vi basics
+  - Note: Learn from usage not memorization
+  - Exit from emacs
+    - : (colon keys; ex-mode)
+      - wq(a) -> Write and quit all buffers
+      - q(a)! -> Quit (all) buffers without saving
+  - Motion Keys
+    - 'h' -> Move left
+    - 'j' -> Move down
+    - 'l' -> Move right
+    - 'k' -> Move up
+  - Editing Keys
+    - 'i' -> Switch to INSERT mode (put characters in)
+    - '<ESC>' -> Return to NORMAL mode
+* Vi Motions and Objects
+  - Vi(m) changes what it edits depending on keys pressed before the modifier
+  - The format for this is:
+    - [number] [modifier (such as d{elete})] [object] OR [modifier] [number] [object]
+  - Modifiers
+    - d(elete)
+    - c(hange)
+  - Objects
+    - w -> (w)ord
+    - $ -> end of line
+    - 0 -> beginning of line
+  - Example
+    - d -> delete
+    - dw -> (d)elete (w)ord
+    - d$ -> (d)elete to end of line
+* Vi Motions and Objects (cont.)
+  - Exeptions
+    - There are some exceptions
+      - dd -> delete whole line
+    - However these exceptions can be acted upon with numbers still
+      - 2dd -> delete 2 whole lines
+* Editing text
+  - Deletion (d)
+    - dw -> (d)elete (w)ord
+    - d$ -> (d)elete to end of line
+    - dd -> (d)elete whole line
+  - Recovery (misc.)
+    - 'u' -> undo
+        - '<CTRL>-R' -> redo
+    - 'p' -> (p)ut last deletion at point
+    - 'r' -> (r)eplace character
+  - Changing text (c)
+    - 'c' is used in conjunction with motions and objects
+      - (c)w -> (c)hange word [delete word and go to insert mode]
+      - (c)$ -> (c) to end of line
+      - (c)0 -> (c)hange to beginning of line
+* Moving around in a buffer
+  - : (colon)
+    - (N) -> Go to N line
+  - Go (g)
+    - 'G' -> bottom of buffer, (G)utter
+    - 'gg' -> Be(gg)inning of buffer:
+      - If prepended with a number, you go to that number
+      - 'N [a number] gg' go to line N
+  - Search (misc.)
+    - '/' -> Search for characters
+      - 'n' -> Search forward
+      - 'N' -> Search backwards
+    - '%' -> find matching ), ], or },
+* Colon commands
+  - : (colon)
+    - (:)s (S)ubstitute
+      - (:s)/old/new -> Substitute first 'old' with new on current line
+      - (:s)/old/new/g -> Substitute all 'old's on new on current line
+      - :#,#s/old/new/g -> Substitute 'old' with 'new' on lines # to #
+      - (:)%(s)/old/new/g -> Substitute 'old' with 'new' on all of buffer
+      - (:%s/old/new/g)c -> Ask for confirmation
+    - (:)! Execute external command(!) [Finally{!}]
+      - Commands go to your shell
+        - Windows = cmd.exe
+        - ^nix variants = /bin/(*)sh
+        - Obscure OSes (Haiku, Temple Os{?!?!}) = ¯\_(ツ)_/¯     
+        - Example
+          - (:)!ls or (:)!dir -> list files
+    - (:)#,# w FILENAME -> Selective write
+      - Write only lines # to #
+    - (:)r FILENAME -> Insert file FILENAME at point
+* Editing text (The Sequel)
+  - 'o' -> Open new line under point
+    - 'O' -> Open new line above point
+  - 'a' -> Append text after the point
+    - 'A' -> Append text to the end of line
+  - 'R' -> Go into replace mode until <ESC> is pressed
+* Emacs lisp
+* Emacs lisp in fifteen minutes
+  - Learn it here
+  - Source: learnxinyminutes.com/docs/elisp/ 
+* The Emacs Operating System
+  - "Emacs is a great operating system..."
+* The Emacs Operating System
+  - "Emacs is a great operating system, just lacking a decent editor"
+* The Emacs Operating System
+  - "Emacs is a great operating system, just lacking a decent editor"
+  - Emacs is known for it's large list of modes written in Elisp
+  - What has been done so far:
+* The Emacs Operating System
+  - "Emacs is a great operating system, just lacking a decent editor"
+  - Emacs is known for it's large list of modes written in Elisp
+  - What has been done so far:
+    - Web browser (eww, webkit)
+* The Emacs Operating System
+  - "Emacs is a great operating system, just lacking a decent editor"
+  - Emacs is known for it's large list of modes written in Elisp
+  - What has been done so far:
+    - Web browser (eww, webkit)
+    - Mail Reader (gnus, rmail)
+* The Emacs Operating System
+  - "Emacs is a great operating system, just lacking a decent editor"
+  - Emacs is known for it's large list of modes written in Elisp
+  - What has been done so far:
+    - Web browser (eww, webkit)
+    - Mail Reader (gnus, rmail)
+    - Office Suite (Org Mode, AUCTeX, Doc-View)
+* The Emacs Operating System
+  - "Emacs is a great operating system, just lacking a decent editor"
+  - Emacs is known for it's large list of modes written in Elisp
+  - What has been done so far:
+    - Web browser (eww, webkit)
+    - Mail Reader (gnus, rmail)
+    - Office Suite (Org Mode, AUCTeX, Doc-View)
+    - Planner (Org Mode, diary.el)
+* The Emacs Operating System
+  - "Emacs is a great operating system, just lacking a decent editor"
+  - Emacs is known for it's large list of modes written in Elisp
+  - What has been done so far:
+    - Web browser (eww, webkit)
+    - Mail Reader (gnus, rmail)
+    - Office Suite (Org Mode, AUCTeX, Doc-View)
+    - Planner (Org Mode, diary.el)
+    - Music Player (emms, bongo)
+* The Emacs Operating System
+  - "Emacs is a great operating system, just lacking a decent editor"
+  - Emacs is known for it's large list of modes written in Elisp
+  - What has been done so far:
+    - Web browser (eww, webkit)
+    - Mail Reader (gnus, rmail)
+    - Office Suite (Org Mode, AUCTeX, Doc-View)
+    - Planner (Org Mode, diary.el)
+    - Music Player (emms, bongo)
+    - Shell (eshell, ansi-term)
+* The Emacs Operating System
+  - "Emacs is a great operating system, just lacking a decent editor"
+  - Emacs is known for it's large list of modes written in Elisp
+  - What has been done so far:
+    - Web browser (eww, webkit)
+    - Mail Reader (gnus, rmail)
+    - Office Suite (Org Mode, AUCTeX, Doc-View)
+    - Planner (Org Mode, diary.el)
+    - Music Player (emms, bongo)
+    - Shell (eshell, ansi-term)
+    - IRC (erc)
+    - Vim-Plugins (Ctrlp->projectile, YouCompleteMe-> Company&Auto-Complete)
+    - X window manager (EXWM)
+* So Yeah.
+  - Go on and use EMACS (os)
