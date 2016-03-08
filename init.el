@@ -126,8 +126,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (use-package sublimity
   :ensure t
   :init
-
-
     (use-package sublimity-attractive)
     (sublimity-mode)
 )
