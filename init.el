@@ -60,6 +60,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
     (when (get-buffer "*Completions*") (delete-windows-on "*Completions*"))
     (abort-recursive-edit)))
 
+<<<<<<< HEAD
+=======
 (defun touchpad-off ()
   "Turn touchpad off (linux only)."
   (interactive)
@@ -83,6 +85,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   (pdf-tools-install))
 (it-did-not-work)
 
+>>>>>>> 3dc3be1... add files
 ;; macros
 (defmacro define-and-bind-text-object (key start-regex end-regex)
   "Create new evil text object based on KEY, START-REGEX, and END-REGEX."
@@ -153,6 +156,55 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (use-package evil
   :ensure t
   :init
+<<<<<<< HEAD
+  (evil-mode)
+  (setq evil-emacs-state-cursor '("red" box))
+  (setq evil-normal-state-cursor '("gray" box))
+  (setq evil-visual-state-cursor '("orange" box))
+  (setq evil-insert-state-cursor '("green" bar))
+  (setq evil-replace-state-cursor '("red" bar))
+  (setq evil-operator-state-cursor '("red" hollow))
+  (use-package evil-leader
+    :ensure t
+    ;; :init
+    :config
+    (evil-leader/set-leader "<SPC>")
+    (evil-leader/set-key
+      "f" 'find-file
+      "e" 'load-file
+      "bk" 'kill-buffer
+      "bl" 'list-buffers
+      "bn" 'next-buffer
+      "bs" 'switch-to-buffer
+      "bo" 'other-window
+      "bwd" 'delete-window
+      "n" 'linum-relative-global-mode
+      "butterfly" 'butterfly
+      "hi" 'info
+      "hdf" 'describe-function
+      "hdv" 'describe-key
+      "hdk" 'describe-key
+      "pr" 'powerline-reset
+      "ol" 'org-store-line
+      "oa" 'org-agenda
+      "t" 'neotree
+      "pr" 'powerline-reset
+      "ub" 'battery
+      "up" 'proced
+      "vv" 'vimish-fold
+      "vd" 'vimish-fold-delete
+      "<SPC>" 'helm-M-x)
+    )
+  :config
+  (define-key evil-motion-state-map "0" 'evil-end-of-line)
+  (define-key evil-motion-state-map "$" 'evil-beginning-of-line)
+  (define-key evil-motion-state-map ";" 'evil-ex)
+  (define-key evil-motion-state-map ":" 'evil-repeat-find-char)
+  ;; define text objects
+  (define-and-bind-text-object "*" "*" "*")
+  (define-and-bind-text-object "%" "%" "%")
+  (define-and-bind-text-object "$" "$" "$")
+=======
     (evil-mode)
     (setq evil-emacs-state-cursor '("red" box))
     (setq evil-normal-state-cursor '("gray" box))
@@ -201,6 +253,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
     (define-and-bind-text-object "*" "*" "*")
     (define-and-bind-text-object "%" "%" "%")
     (define-and-bind-text-object "$" "$" "$")
+>>>>>>> 3dc3be1... add files
   )
 (use-package org-bullets
 :ensure t
@@ -223,6 +276,13 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   :config
   (global-pretty-lambda-mode 1)
   (pretty-lambda-mode))
+<<<<<<< HEAD
+(use-package pdf-tools
+  :ensure t
+  :init
+  (pdf-tools-install))
+=======
+>>>>>>> 3dc3be1... add files
 (use-package switch-window)
 (use-package exwm)
 (use-package exwm-config)
@@ -245,6 +305,15 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (global-set-key (kbd "C-x w") 'ace-jump-word-mode)
 (global-set-key (kbd "M-SPC") 'helm-mini)
 (global-set-key (kbd "C-x o") 'switch-window)
+<<<<<<< HEAD
+
+(add-hook 'neotree-mode-hook
+          (lambda ()
+            (define-key evil-normal-state-local-map (kbd "TAB") 'neotree-enter)
+            (define-key evil-normal-state-local-map (kbd "SPC") 'neotree-enter)
+            (define-key evil-normal-state-local-map (kbd "q") 'neotree-hide)
+            (define-key evil-normal-state-local-map (kbd "RET") 'neotree-enter)))
+=======
 (global-set-key (kbd "<XF86MonBrightnessUp>")
     (lambda ()
       (interactive)
@@ -280,6 +349,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
               (define-key evil-normal-state-local-map (kbd "SPC") 'neotree-enter)
               (define-key evil-normal-state-local-map (kbd "q") 'neotree-hide)
               (define-key evil-normal-state-local-map (kbd "RET") 'neotree-enter)))
+>>>>>>> 3dc3be1... add files
 
 ;; keybindings of esc quits
 (define-key evil-normal-state-map [escape] 'keyboard-quit)
