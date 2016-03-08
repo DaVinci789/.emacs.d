@@ -60,29 +60,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
     (when (get-buffer "*Completions*") (delete-windows-on "*Completions*"))
     (abort-recursive-edit)))
 
-(defun touchpad-off ()
-  "Turn touchpad off (linux only)."
-  (interactive)
-  (shell-command "xinput set-prop 13 \"Device Enabled\" 0"))
-
-(defun touchpad-on ()
-  "Turn touchpad off (linux only)."
-  (interactive)
-  (shell-command "xinput set-prop 13 \"Device Enabled\" 1"))
-
-(defun xmodmap ()
-  "Xmodmap the thing because it does not work in init."
-  (interactive)
-  (shell-command "xmodmap ~/.xmodmap"))
-(xmodmap)
-
-(defun it-did-not-work ()
-  "Place to load stuff if they didn't work."
-  (interactive)
-  (pretty-lambda-mode)
-  (pdf-tools-install))
-(it-did-not-work)
-
 ;; macros
 (defmacro define-and-bind-text-object (key start-regex end-regex)
   "Create new evil text object based on KEY, START-REGEX, and END-REGEX."
